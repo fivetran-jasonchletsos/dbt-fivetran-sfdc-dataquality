@@ -1,0 +1,34 @@
+version: 2
+
+exposures:
+  - name: sales_performance_dashboard
+    type: dashboard
+    maturity: high
+    url: https://your-bi-tool.com/dashboards/sales-performance
+    description: >
+      Sales performance dashboard showing key metrics by rep and manager,
+      with pipeline and closed-won trends.
+    
+    depends_on:
+      - ref('mart_owner_performance')
+      - ref('mart_manager_performance')
+      - ref('mart_sales_snapshot')
+    
+    owner:
+      name: Sales Analytics Team
+      email: sales-analytics@example.com
+
+  - name: executive_sales_report
+    type: analysis
+    maturity: medium
+    url: https://your-bi-tool.com/reports/executive-sales
+    description: >
+      Weekly executive report showing sales KPIs and forecasts.
+    
+    depends_on:
+      - ref('mart_sales_snapshot')
+      - ref('int_pipeline_daily_snapshot')
+    
+    owner:
+      name: BI Team
+      email: bi-team@example.com

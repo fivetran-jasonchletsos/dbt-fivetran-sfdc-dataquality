@@ -1,0 +1,84 @@
+name: dbt CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run nightly at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  dbt:
+    name: dbt build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          pip install dbt-snowflake==1.5.0
+          pip install dbt-utils
+          pip install dbt-expectations
+      
+      - name: Install SnowSQL
+        run: |
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+          SNOWSQL_DEST=~/snowflake SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+          echo "export PATH=~/snowflake:$PATH" >> ~/.profile
+          source ~/.profile
+          
+      - name: Configure dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          dbt_fivetran_sfdc_dataquality:
+            target: ci
+            outputs:
+              ci:
+                type: snowflake
+                account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+                user: ${{ secrets.SNOWFLAKE_USER }}
+                password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+                role: ${{ secrets.SNOWFLAKE_ROLE }}
+                database: JASON_CHLETSOS_SALESFORCE_FCT  # Default database for output
+                warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+                schema: dbt_ci_${{ github.run_id }}
+                threads: 4
+          EOF
+          
+      - name: Run dbt deps
+        run: dbt deps
+        
+      - name: Run dbt compile
+        run: dbt compile
+        
+      - name: Create databases (if needed)
+        if: github.event_name == 'schedule' || (github.event_name == 'pull_request' && github.actor == 'jason-chletsos')
+        run: |
+          ~/snowflake/snowsql -a ${{ secrets.SNOWFLAKE_ACCOUNT }} \
+                             -u ${{ secrets.SNOWFLAKE_USER }} \
+                             -p ${{ secrets.SNOWFLAKE_PASSWORD }} \
+                             -r ${{ secrets.SNOWFLAKE_ROLE }} \
+                             -w ${{ secrets.SNOWFLAKE_WAREHOUSE }} \
+                             -f scripts/init_databases.sql
+        
+      - name: Run dbt build
+        run: dbt build --full-refresh
+        
+      - name: Generate dbt docs
+        run: dbt docs generate
+        
+      - name: Upload dbt artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dbt-artifacts
+          path: |
+            target/
+            logs/

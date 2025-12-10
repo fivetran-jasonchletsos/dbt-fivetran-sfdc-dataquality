@@ -1,0 +1,58 @@
+version: 2
+
+sources:
+  - name: salesforce
+    description: Salesforce data loaded via Fivetran
+    database: "{{ var('salesforce_database', 'JASON_CHLETSOS_SALESFORCE_SANDBOX') }}"
+    schema: "{{ var('salesforce_schema', 'JASON_CHLETSOS_SALESFORCE_SANDBOX') }}"
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    freshness:
+      warn_after: {count: 25, period: hour}
+      error_after: {count: 48, period: hour}
+    
+    tables:
+      - name: ACCOUNT
+        description: Salesforce accounts table
+        columns:
+          - name: ID
+            description: Primary key for the account record
+            tests:
+              - unique
+              - not_null
+      
+      - name: CONTACT
+        description: Salesforce contacts table
+        columns:
+          - name: ID
+            description: Primary key for the contact record
+            tests:
+              - unique
+              - not_null
+      
+      - name: OPPORTUNITY
+        description: Salesforce opportunities table
+        columns:
+          - name: ID
+            description: Primary key for the opportunity record
+            tests:
+              - unique
+              - not_null
+      
+      - name: OPPORTUNITY_LINE_ITEM
+        description: Salesforce opportunity line items
+        columns:
+          - name: ID
+            description: Primary key for the opportunity line item record
+            tests:
+              - unique
+              - not_null
+      
+      - name: USER
+        description: Salesforce users
+        columns:
+          - name: ID
+            description: Primary key for the user record
+            tests:
+              - unique
+              - not_null

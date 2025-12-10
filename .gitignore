@@ -1,0 +1,49 @@
+target/
+dbt_packages/
+logs/
+.DS_Store
+.idea/
+.vscode/
+*.pyc
+venv/
+env/
+.env
+profiles.yml
+
+# Python virtual environments
+.venv/
+__pycache__/
+
+# Local development files
+*.log
+*.csv
+*.xlsx
+*.json
+!dbt_project.yml
+!packages.yml
+!selectors.yml
+
+# Credentials and secrets
+.snowflake_credentials
+.user.yml
+.credentials
+
+# Documentation build
+docs/build/
+
+# Testing artifacts
+.coverage
+htmlcov/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# IDE specific files
+*.sublime-project
+*.sublime-workspace
+.project
+.pydevproject
+*.swp
+*.swo

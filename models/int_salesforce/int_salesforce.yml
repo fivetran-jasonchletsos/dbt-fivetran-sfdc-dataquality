@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: int_opportunity_enhanced
+    description: Enhanced opportunity data joined with account and user information
+    columns:
+      - name: opportunity_id
+        description: The unique identifier for the opportunity
+        tests:
+          - unique
+          - not_null
+      - name: account_id
+        description: Foreign key to the account
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_salesforce__account')
+              field: account_id
+      - name: owner_id
+        description: Foreign key to the user who owns the opportunity
+        tests:
+          - relationships:
+              to: ref('stg_salesforce__user')
+              field: user_id
+
+  - name: int_pipeline_daily_snapshot
+    description: Daily snapshot of opportunity pipeline by stage
+    columns:
+      - name: snapshot_date
+        description: The date of the snapshot
+        tests:
+          - not_null
+      - name: opportunity_id
+        description: The unique identifier for the opportunity
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_salesforce__opportunity')
+              field: opportunity_id
+      - name: pipeline_category
+        description: Categorization of pipeline (Won, Lost, Closing This Month, etc.)
+        tests:
+          - not_null

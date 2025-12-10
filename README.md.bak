@@ -1,0 +1,5 @@
+models/
+├── src_salesforce/    # Source definitions
+├── stg_salesforce/    # Lightweight staging models
+├── int_salesforce/    # Intermediate business logic
+└── mart_salesforce/   # Final dimensional models

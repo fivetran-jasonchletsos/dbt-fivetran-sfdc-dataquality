@@ -1,0 +1,99 @@
+version: 2
+
+models:
+  - name: stg_salesforce__account
+    description: Staged Salesforce account data
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 0
+          max_value: 1000000000
+    columns:
+      - name: account_id
+        description: The unique identifier for the account
+        tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_unique
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: account_name
+        description: The name of the account
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+
+  - name: stg_salesforce__contact
+    description: Staged Salesforce contact data
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 0
+          max_value: 1000000000
+    columns:
+      - name: contact_id
+        description: The unique identifier for the contact
+        tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_unique
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: email
+        description: The email address of the contact
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+              match_on: not_null_only
+
+  - name: stg_salesforce__opportunity
+    description: Staged Salesforce opportunity data
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 0
+          max_value: 1000000000
+    columns:
+      - name: opportunity_id
+        description: The unique identifier for the opportunity
+        tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_unique
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: amount
+        description: The amount of the opportunity
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000000000
+              mostly_pct: 0.95
+
+  - name: stg_salesforce__opportunity_line_item
+    description: Staged Salesforce opportunity line item data
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 0
+          max_value: 1000000000
+    columns:
+      - name: opportunity_line_item_id
+        description: The unique identifier for the opportunity line item
+        tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_unique
+          - dbt_expectations.expect_column_values_to_not_be_null
+      - name: opportunity_id
+        description: Foreign key to the opportunity
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_not_be_null
+
+  - name: stg_salesforce__user
+    description: Staged Salesforce user data
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 0
+          max_value: 1000000000
+    columns:
+      - name: user_id
+        description: The unique identifier for the user
+        tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_unique
+          - dbt_expectations.expect_column_values_to_not_be_null

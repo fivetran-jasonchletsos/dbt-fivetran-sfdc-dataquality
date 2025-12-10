@@ -1,0 +1,32 @@
+dbt_fivetran_sfdc_dataquality:
+  outputs:
+    dev:
+      type: snowflake
+      account: [your_account]
+      user: [your_username]
+      password: [your_password]
+      role: [your_role]
+      database: JASON_CHLETSOS_SALESFORCE_SANDBOX  # Default database
+      warehouse: [your_warehouse]
+      schema: [your_schema]
+      threads: 4
+      
+    prod:
+      type: snowflake
+      account: [your_account]
+      user: [your_username]
+      password: [your_password]
+      role: [your_role]
+      database: JASON_CHLETSOS_SALESFORCE_SANDBOX  # Default database
+      warehouse: [your_warehouse]
+      schema: [your_schema]
+      threads: 8
+      
+  target: dev
+
+# Note: The database configuration in dbt_project.yml will override
+# the database setting here for specific model directories:
+# - src_salesforce: JASON_CHLETSOS_SALESFORCE_SANDBOX
+# - stg_salesforce: JASON_CHLETSOS_SALESFORCE_STG
+# - int_salesforce: JASON_CHLETSOS_SALESFORCE_FCT
+# - mart_salesforce: JASON_CHLETSOS_SALESFORCE_FCT

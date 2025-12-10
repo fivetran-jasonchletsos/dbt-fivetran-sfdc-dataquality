@@ -1,0 +1,49 @@
+name: 'dbt_fivetran_sfdc_dataquality'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'dbt_fivetran_sfdc_dataquality'
+
+# These configurations specify where dbt should look for different types of files.
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+# Enable docs generation
+docs-paths: ["docs"]
+asset-paths: ["assets"]
+
+# Configuring models
+models:
+  dbt_fivetran_sfdc_dataquality:
+    # Config applied to all models in this project
+    +materialized: view
+    src_salesforce:
+      +materialized: table
+      +database: "{{ var('salesforce_database', 'JASON_CHLETSOS_SALESFORCE_SANDBOX') }}"
+    stg_salesforce:
+      +materialized: view
+      +database: JASON_CHLETSOS_SALESFORCE_STG
+    int_salesforce:
+      +materialized: view
+      +database: JASON_CHLETSOS_SALESFORCE_FCT
+    mart_salesforce:
+      +materialized: table
+      +database: JASON_CHLETSOS_SALESFORCE_FCT
+
+vars:
+  salesforce_database: JASON_CHLETSOS_SALESFORCE_SANDBOX
+  salesforce_schema: JASON_CHLETSOS_SALESFORCE_SANDBOX
+
+# Track exposures
+exposures:
+  +enabled: true
