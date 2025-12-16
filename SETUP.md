@@ -129,19 +129,19 @@ To use the included GitHub Actions workflows:
 
 ### Common Issues
 
-1. **Connection Errors**:
+1. Connection Errors:
    - Verify your Snowflake account, username, and password
    - Check network connectivity and VPN settings
 
-2. **Permission Errors**:
+2. Permission Errors:
    - Ensure your Snowflake role has appropriate access to all databases
    - Verify warehouse access permissions
 
-3. **Package Dependency Issues**:
+3. Package Dependency Issues:
    - Run `dbt clean` followed by `dbt deps`
    - Check for version conflicts in packages.yml
 
-4. **Model Compilation Errors**:
+4. Model Compilation Errors:
    - Look for syntax errors in SQL files
    - Verify that referenced sources and models exist
 

@@ -16,10 +16,10 @@ models/
 
 ## Key Features
 
-- **Modular Architecture**: Follows dbt best practices with staging, intermediate, and mart layers
-- **Data Quality Testing**: Integrates Great Expectations tests via metaplane/dbt_expectations
-- **Salesforce-Specific Logic**: Handles Salesforce data nuances from Fivetran connector
-- **Performance Optimization**: Materialization strategy optimized for Snowflake
+- Modular Architecture: Follows dbt best practices with staging, intermediate, and mart layers
+- Data Quality Testing: Integrates Great Expectations tests via metaplane/dbt_expectations
+- Salesforce-Specific Logic: Handles Salesforce data nuances from Fivetran connector
+- Performance Optimization: Materialization strategy optimized for Snowflake
 
 ## Dependencies
 
@@ -89,20 +89,85 @@ dbt test
 dbt test --select stg_salesforce
 ```
 
+## Data Quality Checks
+
+The project implements multiple layers of data quality validation:
+
+### Structural Tests
+- Primary Key Validation: Uniqueness and not-null tests on all ID fields
+- Referential Integrity: Foreign key relationship tests between models (e.g., opportunity → account)
+- Schema Validation: Column type checking and consistency validation
+
+### Data Tests
+- Null Value Detection: Critical fields are tested for completeness
+- Value Range Validation: Numeric fields are tested for sensible ranges
+- Date Range Validation: Date fields are tested for appropriate time periods
+
+### Business Logic Tests
+- Pipeline Consistency: Tests to ensure pipeline metrics are consistent across models
+- Aggregation Validation: Tests to verify rollups match detailed data
+- Hierarchical Integrity: Tests to validate manager-rep relationship
+
+### Implementation Details
+
+Data quality tests are implemented at each layer of the model hierarchy:
+
+1. Source Tests (`src_salesforce`):
+   - Basic data integrity tests on raw Fivetran data
+   - Freshness tests to ensure data is current
+
+2. Staging Tests (`stg_salesforce`):
+   - Column-level tests for data type validation
+   - Not-null tests on required fields
+   - Uniqueness tests on primary keys
+
+3. Intermediate Tests (`int_salesforce`):
+   - Relationship tests between joined models
+   - Business logic validation tests
+   - Calculated field validation
+
+4. Mart Tests (`mart_salesforce`):
+   - Aggregation consistency tests
+   - End-to-end data validation
+   - Business metric validation
+
+### Great Expectations Integration
+
+This project leverages Great Expectations through the `metaplane/dbt_expectations` package in the following ways:
+
+1. **YAML-based Test Definitions**: Great Expectations tests are defined in the YAML files:
+   - `models/stg_salesforce/stg_salesforce.yml`
+   - `models/int_salesforce/int_salesforce.yml`
+   - `models/mart_salesforce/mart_salesforce.yml`
+
+2. **Test Types Used**:
+   - `expect_column_values_to_not_be_null`: Ensures critical fields contain values
+   - `expect_column_values_to_be_in_type_list`: Validates data types
+   - `expect_column_values_to_be_between`: Checks numeric values fall within expected ranges
+   - `expect_column_values_to_be_unique`: Verifies uniqueness constraints
+   - `expect_column_pair_values_to_be_equal`: Ensures consistency between related fields
+
+3. **Custom Expectations**: The project includes custom expectations for Salesforce-specific validation:
+   - Opportunity stage progression validation
+   - Sales cycle time reasonability checks
+   - Account hierarchy validation
+
+Great Expectations provides a robust framework for expressing complex data quality expectations and generating detailed test results that can be shared with stakeholders.
+
 ## Project Structure
 
-- **Staging Models**: Clean, typed, and renamed columns from raw Salesforce data
-- **Intermediate Models**: Business logic and relationship modeling
-- **Mart Models**: Dimensional models for reporting and analysis
-- **Tests**: Data quality validation using Great Expectations
+- Staging Models: Clean, typed, and renamed columns from raw Salesforce data
+- Intermediate Models: Business logic and relationship modeling
+- Mart Models: Dimensional models for reporting and analysis
+- Tests: Data quality validation using Great Expectations
 
 ## Snowflake Configuration
 
 This project uses the following Snowflake objects:
 
-- **Source Database**: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_SANDBOX`
-- **Staging Schema**: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_STG`
-- **Mart/FCT Schema**: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_FCT`
+- Source Database: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_SANDBOX`
+- Staging Schema: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_STG`
+- Mart/FCT Schema: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_FCT`
 
 ## Recent Fixes
 
@@ -118,9 +183,9 @@ This project uses the following Snowflake objects:
 
 If you encounter issues:
 
-1. **Schema Mismatches**: Verify column names in Snowflake source tables
-2. **dbt Execution Hanging**: Try using dbt Cloud instead of local execution
-3. **Package Compatibility**: Ensure you're using metaplane/dbt_expectations v0.10.0
+1. Schema Mismatches: Verify column names in Snowflake source tables
+2. dbt Execution Hanging: Try using dbt Cloud instead of local execution
+3. Package Compatibility: Ensure you're using metaplane/dbt_expectations v0.10.0
 
 ## Contributing
 
