@@ -27,10 +27,7 @@ models:
   dbt_fivetran_sfdc_dataquality:
     # Config applied to all models in this project
     +materialized: view
-    src_salesforce:
-      +materialized: table
-      +database: "JASON_CHLETSOS"
-      +schema: "{{ var('salesforce_schema', 'JASON_CHLETSOS_SALESFORCE_SANDBOX') }}"
+    # Removed src_salesforce configuration since it only contains source definitions
     stg_salesforce:
       +materialized: view
       +database: "JASON_CHLETSOS"
