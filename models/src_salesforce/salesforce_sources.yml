@@ -3,7 +3,7 @@ version: 2
 sources:
   - name: salesforce
     description: Salesforce data loaded via Fivetran
-    database: "{{ var('salesforce_database', 'JASON_CHLETSOS_SALESFORCE_SANDBOX') }}"
+    database: "{{ var('salesforce_database', 'JASON_CHLETSOS') }}"
     schema: "{{ var('salesforce_schema', 'JASON_CHLETSOS_SALESFORCE_SANDBOX') }}"
     loader: fivetran
     

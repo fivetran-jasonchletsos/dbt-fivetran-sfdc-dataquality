@@ -29,20 +29,24 @@ models:
     +materialized: view
     src_salesforce:
       +materialized: table
-      +database: "{{ var('salesforce_database', 'JASON_CHLETSOS_SALESFORCE_SANDBOX') }}"
+      +database: "JASON_CHLETSOS"
+      +schema: "{{ var('salesforce_schema', 'JASON_CHLETSOS_SALESFORCE_SANDBOX') }}"
     stg_salesforce:
       +materialized: view
-      +database: JASON_CHLETSOS_SALESFORCE_STG
+      +database: "JASON_CHLETSOS"
+      +schema: "JASON_CHLETSOS_SALESFORCE_STG"
     int_salesforce:
       +materialized: view
-      +database: JASON_CHLETSOS_SALESFORCE_FCT
+      +database: "JASON_CHLETSOS"
+      +schema: "JASON_CHLETSOS_SALESFORCE_FCT"
     mart_salesforce:
       +materialized: table
-      +database: JASON_CHLETSOS_SALESFORCE_FCT
+      +database: "JASON_CHLETSOS"
+      +schema: "JASON_CHLETSOS_SALESFORCE_FCT"
 
 vars:
-  salesforce_database: JASON_CHLETSOS_SALESFORCE_SANDBOX
-  salesforce_schema: JASON_CHLETSOS_SALESFORCE_SANDBOX
+  salesforce_database: "JASON_CHLETSOS"
+  salesforce_schema: "JASON_CHLETSOS_SALESFORCE_SANDBOX"
 
 # Track exposures
 exposures:
