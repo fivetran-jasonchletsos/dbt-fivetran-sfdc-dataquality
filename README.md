@@ -1,6 +1,6 @@
 # dbt Fivetran Salesforce Data Quality
 
-A dbt project for transforming Salesforce data from Fivetran with integrated data quality tests using Great Expectations.
+A dbt project for transforming Salesforce data from Fivetran with integrated data quality tests using Great Expectations. cool
 
 ## Project Overview
 
