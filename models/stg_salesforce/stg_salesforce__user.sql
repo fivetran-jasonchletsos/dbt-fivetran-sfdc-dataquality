@@ -33,7 +33,7 @@ renamed as (
         cast(last_login_date as timestamp) as last_login_at,
         
         -- Metadata
-        is_deleted,
+        _fivetran_deleted as is_deleted,
         _fivetran_synced as synced_at
     from source
 )
