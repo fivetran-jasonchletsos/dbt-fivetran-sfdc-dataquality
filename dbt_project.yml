@@ -30,13 +30,13 @@ models:
     # Removed src_salesforce configuration since it only contains source definitions
     stg_salesforce:
       +materialized: view
-      +schema: "JASON_CHLETSOS_SALESFORCE_STG"
+      +schema: "SALESFORCE_STG"
     int_salesforce:
       +materialized: view
-      +schema: "JASON_CHLETSOS_SALESFORCE_FCT"
+      +schema: "SALESFORCE_FCT"
     mart_salesforce:
       +materialized: table
-      +schema: "JASON_CHLETSOS_SALESFORCE_FCT"
+      +schema: "SALESFORCE_FCT"
 
 vars:
   salesforce_database: "JASON_CHLETSOS"

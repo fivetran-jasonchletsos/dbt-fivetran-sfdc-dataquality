@@ -166,14 +166,10 @@ Great Expectations provides a robust framework for expressing complex data quali
 This project uses the following Snowflake objects:
 
 - Source Database: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_SANDBOX`
-- Staging Schema: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_STG`
-- Mart/FCT Schema: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_FCT`
+- Staging Schema: `JASON_CHLETSOS.jason_chletsos_SALESFORCE_STG`
+- Mart/FCT Schema: `JASON_CHLETSOS.jason_chletsos_SALESFORCE_FCT`
 
-**Note**: Due to a configuration mismatch between profiles.yml and dbt_project.yml, models may be created in schemas with duplicated names:
-- `JASON_CHLETSOS.JASON_CHLETSOS_JASON_CHLETSOS_SALESFORCE_STG` (staging models)
-- `JASON_CHLETSOS.JASON_CHLETSOS_JASON_CHLETSOS_SALESFORCE_FCT` (intermediate and mart models)
-
-This has been fixed in the profiles.yml file by setting the database to `JASON_CHLETSOS` to match dbt_project.yml.
+**Note**: When running in dbt Cloud, the schema names include a prefix based on the schema setting in the dbt Cloud connection. The dbt_project.yml file has been updated to account for this by using simplified schema names that will be properly prefixed by dbt Cloud.
 
 ## Recent Fixes
 
@@ -192,11 +188,11 @@ If you encounter issues:
 1. **Schema Mismatches**: Verify column names in Snowflake source tables
 2. **dbt Execution Hanging**: Try using dbt Cloud instead of local execution
 3. **Package Compatibility**: Ensure you're using metaplane/dbt_expectations v0.10.0
-4. **Schema Name Duplication**: If models are not found in the expected schemas, check for schema name duplication:
-   - Expected location: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_STG`
-   - Possible duplicated location: `JASON_CHLETSOS.JASON_CHLETSOS_JASON_CHLETSOS_SALESFORCE_STG`
+4. **Schema Naming in dbt Cloud**: When running in dbt Cloud, models are created in schemas with the dbt Cloud connection's schema prefix:
+   - Staging models: `JASON_CHLETSOS.jason_chletsos_SALESFORCE_STG`
+   - Intermediate/Mart models: `JASON_CHLETSOS.jason_chletsos_SALESFORCE_FCT`
    
-   This can happen if the database name in profiles.yml doesn't match the database specified in dbt_project.yml.
+   The dbt_project.yml file has been configured to work with this prefixing behavior.
 
 ## Contributing
 
