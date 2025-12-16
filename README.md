@@ -169,6 +169,12 @@ This project uses the following Snowflake objects:
 - Staging Schema: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_STG`
 - Mart/FCT Schema: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_FCT`
 
+**Note**: Due to a configuration mismatch between profiles.yml and dbt_project.yml, models may be created in schemas with duplicated names:
+- `JASON_CHLETSOS.JASON_CHLETSOS_JASON_CHLETSOS_SALESFORCE_STG` (staging models)
+- `JASON_CHLETSOS.JASON_CHLETSOS_JASON_CHLETSOS_SALESFORCE_FCT` (intermediate and mart models)
+
+This has been fixed in the profiles.yml file by setting the database to `JASON_CHLETSOS` to match dbt_project.yml.
+
 ## Recent Fixes
 
 - Updated from `calogica/dbt_expectations` to `metaplane/dbt_expectations` (v0.10.0)
@@ -183,9 +189,14 @@ This project uses the following Snowflake objects:
 
 If you encounter issues:
 
-1. Schema Mismatches: Verify column names in Snowflake source tables
-2. dbt Execution Hanging: Try using dbt Cloud instead of local execution
-3. Package Compatibility: Ensure you're using metaplane/dbt_expectations v0.10.0
+1. **Schema Mismatches**: Verify column names in Snowflake source tables
+2. **dbt Execution Hanging**: Try using dbt Cloud instead of local execution
+3. **Package Compatibility**: Ensure you're using metaplane/dbt_expectations v0.10.0
+4. **Schema Name Duplication**: If models are not found in the expected schemas, check for schema name duplication:
+   - Expected location: `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_STG`
+   - Possible duplicated location: `JASON_CHLETSOS.JASON_CHLETSOS_JASON_CHLETSOS_SALESFORCE_STG`
+   
+   This can happen if the database name in profiles.yml doesn't match the database specified in dbt_project.yml.
 
 ## Contributing
 
