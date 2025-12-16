@@ -31,7 +31,7 @@ models:
           - dbt_expectations.expect_column_values_to_be_between:
               min_value: 0
               max_value: 100000000
-              row_condition: "{{ column_name }} IS NOT NULL"
+              where: "{{ column_name }} IS NOT NULL"
 
   - name: mart_manager_performance
     description: Sales performance metrics rolled up to the manager level
@@ -57,7 +57,7 @@ models:
           - dbt_expectations.expect_column_values_to_be_between:
               min_value: 0
               max_value: 1
-              row_condition: "{{ column_name }} IS NOT NULL"
+              where: "{{ column_name }} IS NOT NULL"
 
   - name: mart_sales_snapshot
     description: Single-row KPI dashboard with current sales metrics
