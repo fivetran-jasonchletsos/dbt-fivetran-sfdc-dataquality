@@ -8,7 +8,7 @@ opportunities as (
 -- Generate a date spine for the snapshot
 date_spine as (
     {{ dbt_utils.date_spine(
-        datepart="day",
+        datepart='day',
         start_date="to_date('2020-01-01', 'YYYY-MM-DD')",
         end_date="current_date"
     ) }}
@@ -37,12 +37,12 @@ opportunity_dates as (
         o.is_won
     from dates d
     cross join opportunities o
-    where d.snapshot_date >= date_trunc('day', o.created_at)
+    where d.snapshot_date >= date_trunc(day, o.created_at)
       and (
           -- Either the opportunity is still open at this snapshot date
           (not o.is_closed and d.snapshot_date <= current_date())
           -- Or the opportunity was closed before or on this snapshot date
-          or (o.is_closed and d.snapshot_date <= date_trunc('day', o.updated_at))
+          or (o.is_closed and d.snapshot_date <= date_trunc(day, o.updated_at))
       )
 ),
 
@@ -68,8 +68,8 @@ pipeline_daily as (
         case
             when is_won then 'Won'
             when is_closed and not is_won then 'Lost'
-            when datediff('day', snapshot_date, close_date) <= 30 then 'Closing This Month'
-            when datediff('day', snapshot_date, close_date) <= 90 then 'Closing Next Quarter'
+            when datediff(day, snapshot_date, close_date) <= 30 then 'Closing This Month'
+            when datediff(day, snapshot_date, close_date) <= 90 then 'Closing Next Quarter'
             else 'Future Pipeline'
         end as pipeline_category
     from opportunity_dates

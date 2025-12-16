@@ -40,7 +40,7 @@ This project implements a comprehensive data quality testing framework using bot
 
 ### Great Expectations Integration
 
-The project uses the [dbt_expectations](https://github.com/calogica/dbt_expectations) package to implement Great Expectations-style tests within dbt. This provides advanced validation capabilities beyond standard dbt tests.
+The project uses the [dbt_expectations](https://github.com/metaplane/dbt_expectations) package to implement Great Expectations-style tests within dbt. This provides advanced validation capabilities beyond standard dbt tests.
 
 #### Key Test Types
 
@@ -149,4 +149,4 @@ This project uses three Snowflake databases:
 
 This project depends on the following dbt packages:
 - [dbt_utils](https://github.com/dbt-labs/dbt-utils) (version 1.0.0-b2)
-- [dbt_expectations](https://github.com/calogica/dbt_expectations) (version 0.8.0)
+- [dbt_expectations](https://github.com/metaplane/dbt_expectations) (version 0.10.0)

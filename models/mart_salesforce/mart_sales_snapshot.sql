@@ -21,65 +21,65 @@ sales_snapshot as (
         -- Closed won today
         sum(case 
             when is_won 
-            and date_trunc('day', updated_at) = current_date() 
+            and date_trunc(day, updated_at) = date_trunc(day, current_date()) 
             then amount else 0 
         end) as closed_won_today,
         
         count(case 
             when is_won 
-            and date_trunc('day', updated_at) = current_date() 
+            and date_trunc(day, updated_at) = date_trunc(day, current_date()) 
             then opportunity_id else null 
         end) as closed_won_today_count,
         
         -- Closed won this week
         sum(case 
             when is_won 
-            and date_trunc('week', updated_at) = date_trunc('week', current_date()) 
+            and date_trunc(week, updated_at) = date_trunc(week, current_date()) 
             then amount else 0 
         end) as closed_won_this_week,
         
         count(case 
             when is_won 
-            and date_trunc('week', updated_at) = date_trunc('week', current_date()) 
+            and date_trunc(week, updated_at) = date_trunc(week, current_date()) 
             then opportunity_id else null 
         end) as closed_won_this_week_count,
         
         -- Closed won this month
         sum(case 
             when is_won 
-            and date_trunc('month', updated_at) = date_trunc('month', current_date()) 
+            and date_trunc(month, updated_at) = date_trunc(month, current_date()) 
             then amount else 0 
         end) as closed_won_this_month,
         
         count(case 
             when is_won 
-            and date_trunc('month', updated_at) = date_trunc('month', current_date()) 
+            and date_trunc(month, updated_at) = date_trunc(month, current_date()) 
             then opportunity_id else null 
         end) as closed_won_this_month_count,
         
         -- Closed won this quarter
         sum(case 
             when is_won 
-            and date_trunc('quarter', updated_at) = date_trunc('quarter', current_date()) 
+            and date_trunc(quarter, updated_at) = date_trunc(quarter, current_date()) 
             then amount else 0 
         end) as closed_won_this_quarter,
         
         count(case 
             when is_won 
-            and date_trunc('quarter', updated_at) = date_trunc('quarter', current_date()) 
+            and date_trunc(quarter, updated_at) = date_trunc(quarter, current_date()) 
             then opportunity_id else null 
         end) as closed_won_this_quarter_count,
         
         -- Closed won this year
         sum(case 
             when is_won 
-            and date_trunc('year', updated_at) = date_trunc('year', current_date()) 
+            and date_trunc(year, updated_at) = date_trunc(year, current_date()) 
             then amount else 0 
         end) as closed_won_this_year,
         
         count(case 
             when is_won 
-            and date_trunc('year', updated_at) = date_trunc('year', current_date()) 
+            and date_trunc(year, updated_at) = date_trunc(year, current_date()) 
             then opportunity_id else null 
         end) as closed_won_this_year_count,
         
