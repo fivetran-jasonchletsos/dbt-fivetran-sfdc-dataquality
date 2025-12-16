@@ -1,16 +1,6 @@
 # dbt-fivetran-sfdc-dataquality
 
-A comprehensive dbt project for Salesforce data quality testing and transformation using Fivetran connectors.
-
-## Overview
-
-This project implements a multi-layered data quality framework for Salesforce data loaded via Fivetran. It includes:
-
-- Source validation tests for raw Salesforce tables
-- Staging models with comprehensive data quality tests
-- Intermediate models with relationship validation
-- Mart models with business rule validation
-- Custom data quality tests for specific business requirements
+A dbt project for transforming and validating Salesforce data loaded via Fivetran.
 
 ## Project Structure
 
@@ -27,247 +17,136 @@ dbt-fivetran-sfdc-dataquality/
 └── seeds/                    # Seed files (if any)
 ```
 
-## Data Flow Architecture
+## Overview
 
-```
-SALESFORCE (Source) → STAGING → INTERMEDIATE → MART
-```
+This project transforms raw Salesforce data from Fivetran into analytics-ready models. It follows the dbt best practices with a multi-layered approach:
 
-- **Source Layer**: Raw Salesforce data loaded by Fivetran
-- **Staging Layer**: Cleaned and standardized data
-- **Intermediate Layer**: Business logic and relationships
-- **Mart Layer**: Analytics-ready models for reporting
-
-## Quick Start
-
-1. Clone the repository:
-   ```
-   git clone https://github.com/your-org/dbt-fivetran-sfdc-dataquality.git
-   cd dbt-fivetran-sfdc-dataquality
-   ```
-
-2. Set up your environment (see [SETUP.md](SETUP.md) for details)
-
-3. Initialize the databases:
-   ```
-   snowsql -f scripts/init_databases.sql
-   ```
-
-4. Install dependencies:
-   ```
-   make deps
-   ```
-
-5. Run the project:
-   ```
-   make build
-   ```
-
-## Scripts Reference
-
-### `scripts/init_databases.sql`
-
-**Purpose**: Creates the required databases for the project.
-
-**Usage**:
-```
-snowsql -f scripts/init_databases.sql
-```
-
-**What it does**:
-- Creates `JASON_CHLETSOS_SALESFORCE_STG` database for staging models
-- Creates `JASON_CHLETSOS_SALESFORCE_FCT` database for fact/mart models
-- Contains commented permission grants that can be customized
-
-**Prerequisites**:
-- Snowflake admin privileges or ability to create databases
-- Assumes `JASON_CHLETSOS_SALESFORCE_SANDBOX` already exists as the source database
-
-### `scripts/verify_setup.sh`
-
-**Purpose**: Validates that your environment is correctly set up.
-
-**Usage**:
-```
-./scripts/verify_setup.sh
-```
-
-**What it does**:
-- Checks dbt installation and version
-- Verifies profiles.yml configuration
-- Validates project structure and required directories
-- Confirms presence of essential files
-- Runs `dbt debug` to test connectivity
-
-**Prerequisites**:
-- Bash shell
-- dbt installed
-- Execute permission (`chmod +x scripts/verify_setup.sh`)
+1. **Source Layer (`src_salesforce`)**: Defines the raw Fivetran Salesforce tables
+2. **Staging Layer (`stg_salesforce`)**: Cleans and standardizes individual tables
+3. **Intermediate Layer (`int_salesforce`)**: Combines and transforms data for business logic
+4. **Mart Layer (`mart_salesforce`)**: Creates final dimensional models for reporting
 
 ## Data Quality Testing Strategy
 
-This project implements a multi-layered testing approach:
+This project implements a comprehensive data quality testing framework using both native dbt tests and Great Expectations (via the dbt_expectations package).
 
-### 1. Source Tests (`models/src_salesforce/salesforce_sources.yml`)
+### Test Coverage
 
-**Purpose**: Validate raw data integrity from Fivetran.
+- **Source Tests**: Validate raw data integrity from Fivetran
+- **Staging Tests**: Ensure data type consistency, null handling, and basic formatting
+- **Intermediate Tests**: Validate business logic and relationships
+- **Mart Tests**: Confirm KPIs and metrics are calculated correctly
+- **Custom SQL Tests**: Address complex business rules
 
-**Test Coverage**:
-- Primary key validation (unique, not_null) for all source tables
-- Tests run against raw Salesforce tables in `JASON_CHLETSOS_SALESFORCE_SANDBOX`
+### Great Expectations Integration
 
-**Tables Tested**:
-- `ACCOUNT`: ID uniqueness and not null
-- `CONTACT`: ID uniqueness and not null
-- `OPPORTUNITY`: ID uniqueness and not null
-- `OPPORTUNITY_LINE_ITEM`: ID uniqueness and not null
-- `USER`: ID uniqueness and not null
+The project uses the [dbt_expectations](https://github.com/calogica/dbt_expectations) package to implement Great Expectations-style tests within dbt. This provides advanced validation capabilities beyond standard dbt tests.
 
-### 2. Staging Tests (`models/stg_salesforce/stg_salesforce.yml`)
+#### Key Test Types
 
-**Purpose**: Ensure clean, standardized data with proper formatting.
+1. **Column Value Validation**
+   - Range validation (min/max values)
+   - Regex pattern matching
+   - Set validation (allowed values)
 
-**Test Coverage**:
-- Column-level tests using dbt_expectations
-- Value format validation
-- Range checks
-- Row count validation
+2. **Table-Level Validation**
+   - Row count expectations
+   - Relationship validation
+   - Cardinality checks
 
-**Models Tested**:
-- `stg_salesforce__account`:
-  - Row count validation
-  - account_id uniqueness and not null
-  - account_name not null
+3. **Data Type Validation**
+   - Date format validation
+   - Numeric precision checks
+   - String length validation
 
-- `stg_salesforce__contact`:
-  - Row count validation
-  - contact_id uniqueness and not null
-  - email format validation (regex)
+#### Running Great Expectations Tests
 
-- `stg_salesforce__opportunity`:
-  - Row count validation
-  - opportunity_id uniqueness and not null
-  - amount range validation (0 to 1B)
-
-- `stg_salesforce__opportunity_line_item`:
-  - Row count validation
-  - opportunity_line_item_id uniqueness and not null
-  - opportunity_id not null
-
-- `stg_salesforce__user`:
-  - Row count validation
-  - user_id uniqueness and not null
-
-### 3. Intermediate Tests (`models/int_salesforce/int_salesforce.yml`)
-
-**Purpose**: Validate business relationships and transformations.
-
-**Test Coverage**:
-- Referential integrity (relationships)
-- Business logic validation
-- Derived field validation
-
-**Models Tested**:
-- `int_opportunity_enhanced`:
-  - opportunity_id uniqueness and not null
-  - account_id not null and valid reference
-  - owner_id valid reference
-
-- `int_pipeline_daily_snapshot`:
-  - snapshot_date not null
-  - opportunity_id not null and valid reference
-  - pipeline_category not null
-
-### 4. Mart Tests (`models/mart_salesforce/mart_salesforce.yml`)
-
-**Purpose**: Ensure analytical accuracy and business rule compliance.
-
-**Test Coverage**:
-- KPI validation
-- Aggregation validation
-- Business rule enforcement
-
-**Models Tested**:
-- `mart_owner_performance`:
-  - owner_id uniqueness and not null
-  - win_rate between 0 and 1
-  - average_deal_size between 0 and 10M
-
-- `mart_manager_performance`:
-  - manager_id uniqueness and not null
-  - team_size between 0 and 100
-
-- `mart_sales_snapshot`:
-  - snapshot_id uniqueness, not null, and value validation
-  - snapshot_date not null
-
-### 5. Custom SQL Tests (`tests/`)
-
-**Purpose**: Implement complex business rules that can't be expressed in YAML.
-
-**Tests Available**:
-- `account_country_valid.sql`: Validates that account countries are valid ISO Alpha-2 codes
-- `opportunity_stage_valid.sql`: Ensures opportunity stages match the allowed values list
-
-## Development Workflow
-
-### Using Make Commands
-
-This project includes a Makefile with common operations:
+To run all tests including Great Expectations validations:
 
 ```bash
-# Install dependencies
-make deps
-
-# Run all models
-make run
-
-# Run tests
-make test
-
-# Generate documentation
-make docs
-
-# Full build process (deps, seed, run, test, docs)
-make build
-
-# Run specific model layers
-make run-staging
-make run-intermediate
-make run-marts
-
-# Test specific model layers
-make test-staging
-make test-intermediate
-make test-marts
-```
-
-### Manual dbt Commands
-
-```bash
-# Run all models
-dbt run
-
-# Run specific models
-dbt run --models stg_salesforce
-dbt run --models int_salesforce
-dbt run --models mart_salesforce
-
-# Run tests
 dbt test
-
-# Run specific tests
-dbt test --models stg_salesforce
-dbt test --models int_salesforce
-dbt test --models mart_salesforce
 ```
 
-## Additional Documentation
+To run tests for specific models:
 
-- [SETUP.md](SETUP.md): Detailed setup instructions
-- [CONTRIBUTING.md](CONTRIBUTING.md): Guidelines for contributors
-- [CHANGELOG.md](CHANGELOG.md): Version history and changes
+```bash
+dbt test --select stg_salesforce__account
+```
 
-## License
+### Staging Model Tests
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+All staging models include these validation tests:
+
+- **stg_salesforce__account**
+  - Row count validation (0-5M rows)
+  - account_name length validation (1-255 chars)
+  - billing_country regex validation (ISO country codes)
+
+- **stg_salesforce__contact**
+  - Row count validation (0-5M rows)
+  - email regex validation (standard email format)
+
+- **stg_salesforce__opportunity**
+  - Row count validation (0-5M rows)
+  - amount range validation (0-10M)
+  - probability range validation (0-100)
+  - stage_name set validation (predefined stages)
+
+- **stg_salesforce__opportunity_line_item**
+  - Row count validation (0-5M rows)
+  - Relationship validation with opportunities
+
+- **stg_salesforce__user**
+  - Row count validation (0-5M rows)
+  - email regex validation (standard email format)
+  - is_active set validation (true/false)
+
+### Mart Model Tests
+
+Mart models include KPI validation tests:
+
+- **mart_owner_performance**
+  - Row count validation (0-10K rows)
+  - win_rate range validation (0-1)
+  - average_deal_size range validation
+  - weighted_pipeline range validation
+
+- **mart_manager_performance**
+  - Row count validation (0-10K rows)
+  - team_size range validation (0-100)
+  - team_win_rate range validation (0-1)
+
+- **mart_sales_snapshot**
+  - Exact row count validation (1 row per snapshot)
+  - snapshot_id set validation
+  - snapshot_date type validation
+  - total_pipeline_amount range validation
+
+## Getting Started
+
+1. Clone this repository
+2. Install dbt dependencies:
+   ```
+   dbt deps
+   ```
+3. Run the models:
+   ```
+   dbt run
+   ```
+4. Run the tests:
+   ```
+   dbt test
+   ```
+
+## Database Configuration
+
+This project uses three Snowflake databases:
+- `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_SANDBOX` (source)
+- `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_STG` (staging views)
+- `JASON_CHLETSOS.JASON_CHLETSOS_SALESFORCE_FCT` (intermediate views and mart tables)
+
+## Dependencies
+
+This project depends on the following dbt packages:
+- [dbt_utils](https://github.com/dbt-labs/dbt-utils) (version 1.0.0-b2)
+- [dbt_expectations](https://github.com/calogica/dbt_expectations) (version 0.8.0)

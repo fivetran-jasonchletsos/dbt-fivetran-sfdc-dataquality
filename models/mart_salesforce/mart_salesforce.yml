@@ -3,6 +3,10 @@ version: 2
 models:
   - name: mart_owner_performance
     description: Sales performance metrics by opportunity owner
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 1
+          max_value: 10000
     columns:
       - name: owner_id
         description: The unique identifier for the opportunity owner
@@ -12,14 +16,29 @@ models:
       - name: win_rate
         description: Ratio of won opportunities to total closed opportunities
         tests:
-          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1
       - name: average_deal_size
         description: Average amount of won opportunities
         tests:
-          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 10000000
+      - name: weighted_pipeline
+        description: Pipeline weighted by probability
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100000000
+              row_condition: "{{ column_name }} IS NOT NULL"
 
   - name: mart_manager_performance
     description: Sales performance metrics rolled up to the manager level
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 0
+          max_value: 1000
     columns:
       - name: manager_id
         description: The unique identifier for the manager
@@ -29,17 +48,39 @@ models:
       - name: team_size
         description: Number of sales representatives reporting to this manager
         tests:
-          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100
+      - name: team_win_rate
+        description: Average win rate across the team
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1
+              row_condition: "{{ column_name }} IS NOT NULL"
 
   - name: mart_sales_snapshot
     description: Single-row KPI dashboard with current sales metrics
+    tests:
+      - dbt_expectations.expect_table_row_count_to_equal:
+          value: 1
     columns:
       - name: snapshot_id
         description: Always 1, used as the primary key for this single-row table
         tests:
           - unique
           - not_null
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: [1]
       - name: snapshot_date
         description: The date when this snapshot was generated
         tests:
           - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+      - name: total_pipeline_amount
+        description: Total pipeline amount
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000000000

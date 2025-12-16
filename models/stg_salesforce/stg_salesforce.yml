@@ -3,21 +3,37 @@ version: 2
 models:
   - name: stg_salesforce__account
     description: Staged Salesforce account data
-    tests: []
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 1
+          max_value: 1000000
     columns:
       - name: account_id
         description: The unique identifier for the account
         tests:
           - unique
           - not_null
+          - dbt_expectations.expect_column_values_to_be_unique
       - name: account_name
         description: The name of the account
         tests:
           - not_null
+          - dbt_expectations.expect_column_value_lengths_to_be_between:
+              min_value: 1
+              max_value: 255
+      - name: billing_country
+        description: The country of the billing address
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '^[A-Z]{2}$'
+              row_condition: "{{ column_name }} IS NOT NULL"
 
   - name: stg_salesforce__contact
     description: Staged Salesforce contact data
-    tests: []
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 1
+          max_value: 1000000
     columns:
       - name: contact_id
         description: The unique identifier for the contact
@@ -27,11 +43,16 @@ models:
       - name: email
         description: The email address of the contact
         tests:
-          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+              row_condition: "{{ column_name }} IS NOT NULL"
 
   - name: stg_salesforce__opportunity
     description: Staged Salesforce opportunity data
-    tests: []
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 1
+          max_value: 1000000
     columns:
       - name: opportunity_id
         description: The unique identifier for the opportunity
@@ -41,11 +62,32 @@ models:
       - name: amount
         description: The amount of the opportunity
         tests:
-          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 10000000
+              row_condition: "{{ column_name }} IS NOT NULL"
+      - name: probability
+        description: The probability of closing the opportunity
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100
+              row_condition: "{{ column_name }} IS NOT NULL"
+      - name: stage_name
+        description: The stage of the opportunity
+        tests:
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: ['Prospecting', 'Qualification', 'Needs Analysis', 'Value Proposition', 
+                          'Id. Decision Makers', 'Perception Analysis', 'Proposal/Price Quote', 
+                          'Negotiation/Review', 'Closed Won', 'Closed Lost']
+              row_condition: "{{ column_name }} IS NOT NULL"
 
   - name: stg_salesforce__opportunity_line_item
     description: Staged Salesforce opportunity line item data
-    tests: []
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 0
+          max_value: 5000000
     columns:
       - name: opportunity_line_item_id
         description: The unique identifier for the opportunity line item
@@ -56,13 +98,30 @@ models:
         description: Foreign key to the opportunity
         tests:
           - not_null
+          - relationships:
+              to: ref('stg_salesforce__opportunity')
+              field: opportunity_id
 
   - name: stg_salesforce__user
     description: Staged Salesforce user data
-    tests: []
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 1
+          max_value: 10000
     columns:
       - name: user_id
         description: The unique identifier for the user
         tests:
           - unique
           - not_null
+      - name: email
+        description: The email address of the user
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+              row_condition: "{{ column_name }} IS NOT NULL"
+      - name: is_active
+        description: Whether the user is active
+        tests:
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: [true, false]
