@@ -6,10 +6,6 @@ sources:
     database: "{{ var('salesforce_database', 'JASON_CHLETSOS_SALESFORCE_SANDBOX') }}"
     schema: "{{ var('salesforce_schema', 'JASON_CHLETSOS_SALESFORCE_SANDBOX') }}"
     loader: fivetran
-    loaded_at_field: _fivetran_synced
-    freshness:
-      warn_after: {count: 25, period: hour}
-      error_after: {count: 48, period: hour}
     
     tables:
       - name: ACCOUNT

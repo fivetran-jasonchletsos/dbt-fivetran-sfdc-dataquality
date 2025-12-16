@@ -13,14 +13,16 @@ models:
         description: Ratio of won opportunities to total closed opportunities
         tests:
           - dbt_expectations.expect_column_values_to_be_between:
-              min_value: 0
-              max_value: 1
+              arguments:
+                min_value: 0
+                max_value: 1
       - name: average_deal_size
         description: Average amount of won opportunities
         tests:
           - dbt_expectations.expect_column_values_to_be_between:
-              min_value: 0
-              max_value: 10000000
+              arguments:
+                min_value: 0
+                max_value: 10000000
 
   - name: mart_manager_performance
     description: Sales performance metrics rolled up to the manager level
@@ -34,8 +36,9 @@ models:
         description: Number of sales representatives reporting to this manager
         tests:
           - dbt_expectations.expect_column_values_to_be_between:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
 
   - name: mart_sales_snapshot
     description: Single-row KPI dashboard with current sales metrics
@@ -46,7 +49,8 @@ models:
           - unique
           - not_null
           - dbt_expectations.expect_column_values_to_be_in_set:
-              value_set: [1]
+              arguments:
+                value_set: [1]
       - name: snapshot_date
         description: The date when this snapshot was generated
         tests:

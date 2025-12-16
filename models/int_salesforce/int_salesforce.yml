@@ -14,14 +14,16 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_salesforce__account')
-              field: account_id
+              arguments:
+                to: ref('stg_salesforce__account')
+                field: account_id
       - name: owner_id
         description: Foreign key to the user who owns the opportunity
         tests:
           - relationships:
-              to: ref('stg_salesforce__user')
-              field: user_id
+              arguments:
+                to: ref('stg_salesforce__user')
+                field: user_id
 
   - name: int_pipeline_daily_snapshot
     description: Daily snapshot of opportunity pipeline by stage
@@ -35,8 +37,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_salesforce__opportunity')
-              field: opportunity_id
+              arguments:
+                to: ref('stg_salesforce__opportunity')
+                field: opportunity_id
       - name: pipeline_category
         description: Categorization of pipeline (Won, Lost, Closing This Month, etc.)
         tests:

@@ -5,8 +5,9 @@ models:
     description: Staged Salesforce account data
     tests:
       - dbt_expectations.expect_table_row_count_to_be_between:
-          min_value: 0
-          max_value: 1000000000
+          arguments:
+            min_value: 0
+            max_value: 1000000000
     columns:
       - name: account_id
         description: The unique identifier for the account
@@ -24,8 +25,9 @@ models:
     description: Staged Salesforce contact data
     tests:
       - dbt_expectations.expect_table_row_count_to_be_between:
-          min_value: 0
-          max_value: 1000000000
+          arguments:
+            min_value: 0
+            max_value: 1000000000
     columns:
       - name: contact_id
         description: The unique identifier for the contact
@@ -38,15 +40,17 @@ models:
         description: The email address of the contact
         tests:
           - dbt_expectations.expect_column_values_to_match_regex:
-              regex: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-              match_on: not_null_only
+              arguments:
+                regex: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+                row_condition: "{{ column_name }} IS NOT NULL"
 
   - name: stg_salesforce__opportunity
     description: Staged Salesforce opportunity data
     tests:
       - dbt_expectations.expect_table_row_count_to_be_between:
-          min_value: 0
-          max_value: 1000000000
+          arguments:
+            min_value: 0
+            max_value: 1000000000
     columns:
       - name: opportunity_id
         description: The unique identifier for the opportunity
@@ -59,16 +63,17 @@ models:
         description: The amount of the opportunity
         tests:
           - dbt_expectations.expect_column_values_to_be_between:
-              min_value: 0
-              max_value: 1000000000
-              mostly_pct: 0.95
+              arguments:
+                min_value: 0
+                max_value: 1000000000
 
   - name: stg_salesforce__opportunity_line_item
     description: Staged Salesforce opportunity line item data
     tests:
       - dbt_expectations.expect_table_row_count_to_be_between:
-          min_value: 0
-          max_value: 1000000000
+          arguments:
+            min_value: 0
+            max_value: 1000000000
     columns:
       - name: opportunity_line_item_id
         description: The unique identifier for the opportunity line item
@@ -87,8 +92,9 @@ models:
     description: Staged Salesforce user data
     tests:
       - dbt_expectations.expect_table_row_count_to_be_between:
-          min_value: 0
-          max_value: 1000000000
+          arguments:
+            min_value: 0
+            max_value: 1000000000
     columns:
       - name: user_id
         description: The unique identifier for the user
