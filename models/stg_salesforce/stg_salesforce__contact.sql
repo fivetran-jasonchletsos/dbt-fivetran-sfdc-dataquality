@@ -35,7 +35,6 @@ renamed as (
         -- Timestamps
         cast(created_date as timestamp) as created_at,
         cast(last_modified_date as timestamp) as updated_at,
-        cast(birthdate as date) as birth_date,
         
         -- Flags
         is_deleted,

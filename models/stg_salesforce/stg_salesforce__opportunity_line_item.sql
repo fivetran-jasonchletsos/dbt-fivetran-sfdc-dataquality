@@ -9,7 +9,7 @@ renamed as (
         
         -- Foreign keys
         opportunity_id,
-        product2_id,
+        product_2_id as product2_id,
         pricebook_entry_id,
         
         -- Line item details

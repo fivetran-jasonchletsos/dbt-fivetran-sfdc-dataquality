@@ -9,7 +9,7 @@ renamed as (
         
         -- Dimensions
         name as account_name,
-        type as account_type,
+        company_type_c as account_type, -- Changed from 'type' to 'company_type_c'
         industry,
         rating,
         website,
