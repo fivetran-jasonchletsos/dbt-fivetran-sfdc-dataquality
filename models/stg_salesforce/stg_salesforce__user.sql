@@ -8,7 +8,6 @@ renamed as (
         id as user_id,
         
         -- Foreign keys
-        profile_id,
         manager_id,
         
         -- User details

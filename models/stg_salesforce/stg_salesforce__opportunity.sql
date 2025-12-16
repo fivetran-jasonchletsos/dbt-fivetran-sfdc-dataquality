@@ -14,7 +14,7 @@ renamed as (
         
         -- Opportunity details
         name as opportunity_name,
-        type as opportunity_type,
+        type as opportunity_type, -- This is correct, TYPE exists in the OPPORTUNITY table
         stage_name,
         lead_source,
         

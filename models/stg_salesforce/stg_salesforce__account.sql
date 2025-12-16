@@ -11,7 +11,7 @@ renamed as (
         name as account_name,
         company_type_c as account_type, -- Changed from 'type' to 'company_type_c'
         industry,
-        rating,
+        -- Removed rating as it doesn't exist in the source
         website,
         phone,
         
