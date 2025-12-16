@@ -68,8 +68,8 @@ pipeline_daily as (
         case
             when is_won then 'Won'
             when is_closed and not is_won then 'Lost'
-            when date_diff('day', snapshot_date, close_date) <= 30 then 'Closing This Month'
-            when date_diff('day', snapshot_date, close_date) <= 90 then 'Closing Next Quarter'
+            when datediff('day', snapshot_date, close_date) <= 30 then 'Closing This Month'
+            when datediff('day', snapshot_date, close_date) <= 90 then 'Closing Next Quarter'
             else 'Future Pipeline'
         end as pipeline_category
     from opportunity_dates
