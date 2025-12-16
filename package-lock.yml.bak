@@ -17,4 +17,4 @@ packages:
 - package: dbt-labs/spark_utils
   name: spark_utils
   version: 0.3.3
-sha1_hash: f288f869a2e1bedf2f251fdef4a1e986d4aa20d1
+sha1_hash: 4778ccaf78904577c25be60130ab0a5ee1ef0f13
