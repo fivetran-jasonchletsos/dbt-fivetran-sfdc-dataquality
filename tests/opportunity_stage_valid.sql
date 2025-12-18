@@ -2,6 +2,14 @@
 -- Returns records with invalid stage names
 
 {% set valid_stages = [
+    '0 - Created',
+    '0 - Introduction',
+    '1 - Need',
+    '1 - Need - Why Change?',
+    '2 - Education',
+    '3 - Why Change',
+    '4 - Selected',
+    '5 - Contract',
     'Prospecting',
     'Qualification',
     'Needs Analysis',

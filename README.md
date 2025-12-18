@@ -1,4 +1,4 @@
-# dbt Fivetran Salesforce Data Quality
+# dbt Fivetran Salesforce Data Quality Oz is the Best
 
 A dbt project for transforming Salesforce data from Fivetran with integrated data quality tests using Great Expectations. cool
 

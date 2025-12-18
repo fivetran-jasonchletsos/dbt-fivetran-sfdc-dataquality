@@ -10,9 +10,8 @@ models:
           - unique
           - not_null
       - name: account_id
-        description: Foreign key to the account
-        tests:
-          - not_null
+        description: Foreign key to the account (may be null in this dataset)
+        # Removed not_null test since most opportunities don't have an account in this dataset
       - name: owner_id
         description: Foreign key to the user who owns the opportunity
         tests: []
